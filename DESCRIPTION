@@ -1,0 +1,14 @@
+Package: CompLasso
+Title: Personal package for Lin's compositional lasso
+Version: 1.0
+Date: 2018-03-13
+Author: Anna Plantinga
+Maintainer: Anna Plantinga <amp9@williams.edu>
+Description: Fits linear log-contrast model with L1 penalty described in Lin (2014), Biometrika.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.15),
+Depends: R (>= 3.4.2)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
+NeedsCompilation: yes
+Packaged: 2018-03-14 04:54:40 UTC; anna
