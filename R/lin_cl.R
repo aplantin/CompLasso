@@ -28,6 +28,8 @@ cdmm <- function(y, x, lamseq, nlam=100, rlam=1/nlam, mu=1, std=TRUE, maxv=0.4*l
   if (missing(lamseq)) {
     lam.max <- max(abs(crossprod(x, y)))
     lamseq <- lam.max*exp(seq(0, log(rlam), length=nlam))
+  } else {
+      nlam = length(lamseq) 
   }
   sol1 <- cdmm_amp(y = y, x = x, fac = fac, lams = lamseq,
                    mu = mu, maxv = maxv, as.integer(maxit), tol = tol)
