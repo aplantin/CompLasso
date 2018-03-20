@@ -19,13 +19,13 @@
 #'
 cv_cdmm <- function(y, x, nfolds, lamseq, nlam=100, rlam=1/nlam, mu=1, std=TRUE, maxv=0.4*length(y), maxit=c(20,50), tol=c(1e-4, 1e-7)) {
   reord <- sample(1:nrow(x))
-  folds <- sapply(1:nfolds, FUN = function(i) reord[which( (1:nrow(x) %% nfolds + 1) == i)])
+  folds <- lapply(1:nfolds, FUN = function(i) reord[which( (1:nrow(x) %% nfolds + 1) == i)])
   if (missing(lamseq)) {
-      cl.res <- cdmm(y = y, x = x, nlam = nlam, rlam, mu, std, maxv, maxit, tol)  ## initial fit
+      cl.res <- cdmm(y = y, x = x, nlam = nlam, rlam = rlam, mu = mu, std = std, maxv = maxv, maxit = maxit, tol = tol)  ## initial fit
       lamseq <- cl.res$lamseq
   } else {
       nlam = length(lamseq)
-      cl.res <- cdmm(y = y, x = x, lamseq = lamseq, mu, std, maxv, maxit, tol)  ## initial fit
+      cl.res <- cdmm(y = y, x = x, lamseq = lamseq, mu = mu, std = std, maxv = maxv, maxit = maxit, tol = tol)  ## initial fit
   }
 
   cl.pe <- matrix(nrow = nrow(x), ncol = nlam)   ## nlam = 100
@@ -36,13 +36,12 @@ cv_cdmm <- function(y, x, nfolds, lamseq, nlam=100, rlam=1/nlam, mu=1, std=TRUE,
     y.train <- y[-folds[[i]]]
     y.test <- y[folds[[i]]]
 
-    this.res <- cdmm(y = y.train, x = x.train, lamseq = lamseq, mu, std, maxv, maxit, tol)
+    this.res <- cdmm(y = y.train, x = x.train, lamseq = lamseq, mu = mu, std = std, maxv = maxv, maxit = maxit, tol = tol)
     intmat <- matrix(rep(this.res$int, nrow(x.test)), nrow = nrow(x.test), byrow = TRUE)
     cl.pe[folds[[i]], ] <- y.test - x.test %*% this.res$sol - intmat
   }
 
   cl.pe.res <- apply(cl.pe, 2, FUN = function(xx) sum(xx^2/nrow(x)))
-  #plot(cl.pe.res ~ lamseq)
   cl.beta <- cl.res$sol[, which.min(cl.pe.res)]
   cl.int <- cl.res$int[which.min(cl.pe.res)]
   return(list(cv.beta = cl.beta, cv.int = cl.int, pe = cl.pe, fullfit = cl.res))
